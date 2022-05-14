@@ -1,23 +1,18 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import * as courseActions from '../../redux/actions/courseActions';
-import * as authorActions from '../../redux/actions/authorActions';
+import * as loadAuthors from '../../redux/actions/courseActions';
+import * as loadCourses from '../../redux/actions/authorActions';
 import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
 
 class ManageCoursesPage extends React.Component {
   componentDidMount() {
-    const { courses, authors, actions } = this.props;
+    const { courses, authors, loadAuthors, loadCourses } = this.props;
 
     if (courses.length === 0) {
-      actions
-        .loadCourses()
-        .catch(error => alert('Loading courses failed ' + error));
+      loadCourses().catch(error => alert('Loading courses failed ' + error));
     }
     if (authors.length === 0) {
-      actions
-        .loadAuthors()
-        .catch(error => alert('Loading authors failed ' + error));
+      loadAuthors().catch(error => alert('Loading authors failed ' + error));
     }
   }
   render() {
@@ -31,10 +26,13 @@ class ManageCoursesPage extends React.Component {
 
 ManageCoursesPage.propTypes = {
   courses: PropTypes.array.isRequired,
-  actions: PropTypes.object.isRequired,
   authors: PropTypes.array.isRequired,
+  loadCourses: PropTypes.func.isRequired,
+  loadAuthors: PropTypes.func.isRequired,
 };
 
+// using obj form of mapDispatchToProps simplifies code
+// each prop automatically wrapped in call to dispatch
 function mapStateToProps(state) {
   return {
     courses: state.courses,
@@ -48,14 +46,10 @@ mapDispatchToProps is optional param to connect()
 * when mapDispatchToProps is omitted, component gets a dispatch prop
 * injected automatically
 */
-function mapDispatchToProps(dispatch) {
-  return {
-    actions: {
-      loadCourses: bindActionCreators(courseActions.loadCourses, dispatch),
-      loadAuthors: bindActionCreators(authorActions.loadAuthors, dispatch),
-    },
-  };
-}
+const mapDispatchToProps = {
+  loadCourses,
+  loadAuthors,
+};
 
 // declare mapDispatchToProps as an object
 // declare props for each action you want exposed
