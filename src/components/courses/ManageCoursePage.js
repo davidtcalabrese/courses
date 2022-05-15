@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
-import * as loadAuthors from '../../redux/actions/courseActions';
-import * as loadCourses from '../../redux/actions/authorActions';
-import PropTypes from 'prop-types';
-import CourseForm from './CourseForm';
-import { newCourse } from '../../../tools/mockData';
+import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
+import { loadCourses } from "../../redux/actions/courseActions";
+import { loadAuthors } from "../../redux/actions/authorActions";
+import PropTypes from "prop-types";
+import CourseForm from "./CourseForm";
+import { newCourse } from "../../../tools/mockData";
 
 function ManageCoursePage({
   courses,
@@ -25,7 +25,31 @@ function ManageCoursePage({
     }
   }, []);
 
-  return <CourseForm course={course} errors={errors} authors={authors} />;
+  function handleChange(e) {
+    // destructure necessary b/c avoids the e getting gc'd, so it's still
+    // available within nested setCourse callback. w/o this destructure,
+    // we get error "this synthetic event is reused for performance reasons"
+    // b/c synthetic event is no longer defined in async fxn.
+    // destructuring on first line allows us to retain local ref to the event
+    const { name, value } = e.target;
+    // you can pass obj or fxn to setState, passing fxn in this case
+    // so i can safely set new state based on existing state
+    setCourse(prevCourse => ({
+      ...prevCourse,
+      // using es6's computed property syntax
+      // allows me to reference a prop with a variable
+      [name]: name === 'authorId' ? parseInt(value, 10) : value,
+    }));
+  }
+
+  return (
+    <CourseForm
+      course={course}
+      errors={errors}
+      authors={authors}
+      onChange={handleChange}
+    />
+  );
 }
 
 ManageCoursePage.propTypes = {
