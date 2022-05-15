@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { loadCourses } from "../../redux/actions/courseActions";
+import { loadCourses, saveCourse } from "../../redux/actions/courseActions";
 import { loadAuthors } from "../../redux/actions/authorActions";
 import PropTypes from "prop-types";
 import CourseForm from "./CourseForm";
@@ -11,6 +11,7 @@ function ManageCoursePage({
   authors,
   loadAuthors,
   loadCourses,
+  saveCourse, 
   ...props
 }) {
   const [course, setCourse] = useState({ ...props.course });
@@ -42,12 +43,18 @@ function ManageCoursePage({
     }));
   }
 
+  function handleSave(e) {
+    e.preventDefault();
+    saveCourse(course);
+  }
+
   return (
     <CourseForm
       course={course}
       errors={errors}
       authors={authors}
       onChange={handleChange}
+      onSave={handleSave}
     />
   );
 }
@@ -58,6 +65,7 @@ ManageCoursePage.propTypes = {
   authors: PropTypes.array.isRequired,
   loadCourses: PropTypes.func.isRequired,
   loadAuthors: PropTypes.func.isRequired,
+  saveCourse: PropTypes.func.isRequired,
 };
 
 // using obj form of mapDispatchToProps simplifies code
@@ -79,6 +87,7 @@ mapDispatchToProps is optional param to connect()
 const mapDispatchToProps = {
   loadCourses,
   loadAuthors,
+  saveCourse, 
 };
 
 // declare mapDispatchToProps as an object
