@@ -21,6 +21,8 @@ function ManageCoursePage({
   useEffect(() => {
     if (courses.length === 0) {
       loadCourses().catch(error => alert('Loading courses failed ' + error));
+    } else {
+      setCourse({ ...props.course });
     }
     if (authors.length === 0) {
       loadAuthors().catch(error => alert('Loading authors failed ' + error));
@@ -69,14 +71,23 @@ ManageCoursePage.propTypes = {
   loadCourses: PropTypes.func.isRequired,
   loadAuthors: PropTypes.func.isRequired,
   saveCourse: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired
+  history: PropTypes.object.isRequired,
 };
+
+export function getCourseBySlug(courses, slug) {
+  return courses.find(course => course.slug === slug) || null;
+}
 
 // using obj form of mapDispatchToProps simplifies code
 // each prop automatically wrapped in call to dispatch
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
+  const slug = ownProps.match.params.slug;
+  const course =
+    slug && state.courses.length > 0
+      ? getCourseBySlug(state.courses, slug)
+      : newCourse;
   return {
-    course: newCourse,
+    course,
     courses: state.courses,
     authors: state.authors,
   };
