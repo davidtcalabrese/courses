@@ -1,17 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
-import { loadCourses, saveCourse } from "../../redux/actions/courseActions";
-import { loadAuthors } from "../../redux/actions/authorActions";
-import PropTypes from "prop-types";
-import CourseForm from "./CourseForm";
-import { newCourse } from "../../../tools/mockData";
+import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+import { loadCourses, saveCourse } from '../../redux/actions/courseActions';
+import { loadAuthors } from '../../redux/actions/authorActions';
+import PropTypes from 'prop-types';
+import CourseForm from './CourseForm';
+import { newCourse } from '../../../tools/mockData';
 
 function ManageCoursePage({
   courses,
   authors,
   loadAuthors,
   loadCourses,
-  saveCourse, 
+  saveCourse,
+  history,
   ...props
 }) {
   const [course, setCourse] = useState({ ...props.course });
@@ -45,7 +46,9 @@ function ManageCoursePage({
 
   function handleSave(e) {
     e.preventDefault();
-    saveCourse(course);
+    saveCourse(course).then(() => {
+      history.push('/courses');
+    });
   }
 
   return (
@@ -66,6 +69,7 @@ ManageCoursePage.propTypes = {
   loadCourses: PropTypes.func.isRequired,
   loadAuthors: PropTypes.func.isRequired,
   saveCourse: PropTypes.func.isRequired,
+  history: PropTypes.object.isRequired
 };
 
 // using obj form of mapDispatchToProps simplifies code
@@ -87,7 +91,7 @@ mapDispatchToProps is optional param to connect()
 const mapDispatchToProps = {
   loadCourses,
   loadAuthors,
-  saveCourse, 
+  saveCourse,
 };
 
 // declare mapDispatchToProps as an object
